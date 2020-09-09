@@ -1,10 +1,12 @@
 package com.example.myflappy;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -16,12 +18,15 @@ public class GameView extends SurfaceView implements Runnable{
 
     private Thread thread;
     private boolean jogando, gameOver = false;
-    private int telaX, telaY;
+    private int telaX, telaY, score = 0;
     public static float telaRatioX, telaRatioY;
     private Paint paint;
     private Bird[] birds;
+    private SharedPreferences prefs;
     private Random random;
+    private SoundPool soundPool;
     private List<Bullet> bullets;
+    private int sound;
     private Flight flight;
     private Background background1, background2;
 
@@ -38,9 +43,9 @@ public class GameView extends SurfaceView implements Runnable{
 
         flight = new Flight(this, telaY, getResources());
 
-        background2.x = telaX;
-
         bullets = new ArrayList<>();
+
+        background2.x = telaX;
 
         paint = new Paint();
         paint.setTextSize(128);
@@ -68,8 +73,8 @@ public class GameView extends SurfaceView implements Runnable{
     private void update(){
 
         //o fundo moverá 10 pixels no eixo x para esquerda
-        background1.x -= 10 * telaRatioX;
-        background2.x -= 10 * telaRatioX;
+        background1.x -= 8 * telaRatioX;
+        background2.x -= 8 * telaRatioX;
         //verificar o lado direito
         if(background1.x + background1.background.getWidth() < 0){
             background1.x = telaX;
@@ -102,6 +107,7 @@ public class GameView extends SurfaceView implements Runnable{
 
                 if(Rect.intersects(bird.getCollissionShape(),
                         bullet.getCollissionShape())){
+                    score++;
                     bird.x = -500;
                     bullet.x = telaX + 500;
                     bird.wasShot = true;
@@ -151,24 +157,36 @@ public class GameView extends SurfaceView implements Runnable{
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
-
             for (Bird bird : birds)
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
 
-            if(gameOver){
-                jogando = false;
+            canvas.drawText(score + "", telaX / 2f, 164, paint);
 
+            if(gameOver) {
+                jogando = false;
                 canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
                 return;
             }
+
+            canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
 
             for(Bullet bullet : bullets)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint );
 
             getHolder().unlockCanvasAndPost(canvas);
         }
+    }
+
+
+    private void saveIfHighScore() {
+
+        if (prefs.getInt("highscore", 0) < score) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("highscore", score);
+            editor.apply();
+        }
+
     }
 
     private void sleep(){
