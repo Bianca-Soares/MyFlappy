@@ -2,20 +2,25 @@ package com.example.myflappy;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable{
 
     private Thread thread;
-    private boolean jogando;
+    private boolean jogando, gameOver = false;
     private int telaX, telaY;
     public static float telaRatioX, telaRatioY;
     private Paint paint;
+    private Bird[] birds;
+    private Random random;
     private List<Bullet> bullets;
     private Flight flight;
     private Background background1, background2;
@@ -33,11 +38,22 @@ public class GameView extends SurfaceView implements Runnable{
 
         flight = new Flight(this, telaY, getResources());
 
-        bullets = new ArrayList<>();
-
         background2.x = telaX;
 
+        bullets = new ArrayList<>();
+
         paint = new Paint();
+        paint.setTextSize(128);
+        paint.setColor(Color.WHITE);
+
+        birds = new Bird[4];
+
+        for(int i = 0; i < 4; i++){
+            Bird bird = new Bird(getResources());
+            birds[i] = bird;
+        }
+
+        random = new Random();
     }
 
     @Override
@@ -76,17 +92,56 @@ public class GameView extends SurfaceView implements Runnable{
 
         List<Bullet> trash = new ArrayList<>();
 
-        for(Bullet bullet : bullets){
-            if(bullet.x > telaX);
-                trash.add(bullet);
+        for(Bullet bullet : bullets) {
+            if (bullet.x > telaX) ;
+            trash.add(bullet);
 
             bullet.x += 50 * telaRatioX;
-        }
 
+            for(Bird bird : birds){
+
+                if(Rect.intersects(bird.getCollissionShape(),
+                        bullet.getCollissionShape())){
+                    bird.x = -500;
+                    bullet.x = telaX + 500;
+                    bird.wasShot = true;
+
+                }
+
+            }
+
+        }
         for(Bullet bullet : trash)
             bullets.remove(bullet);
 
+        for(Bird bird : birds) {
+            bird.x -= bird.speed;
 
+            if (bird.x + bird.width < 0) {
+
+                if(!bird.wasShot){
+                    gameOver = true;
+                    return;
+                }
+
+                int bound = (int) (30 * telaRatioX);
+                bird.speed = random.nextInt(bound);
+
+                if (bird.speed < 10 * telaRatioX)
+                    bird.speed = (int) (10 * telaRatioX);
+
+                bird.x = telaX;
+                bird.y = random.nextInt(telaY - bird.height);
+
+                bird.wasShot = false;
+            }
+
+            if(Rect.intersects(bird.getCollissionShape(), flight.getCollissionShape())){
+
+                gameOver = true;
+                return;
+            }
+        }
     }
 
     private void draw(){
@@ -98,10 +153,20 @@ public class GameView extends SurfaceView implements Runnable{
 
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
 
-            for(Bullet bullet : bullets){
+            for (Bird bird : birds)
+                canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
+
+            if(gameOver){
+                jogando = false;
+
+                canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+                getHolder().unlockCanvasAndPost(canvas);
+                return;
+            }
+
+            for(Bullet bullet : bullets)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint );
 
-            }
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
