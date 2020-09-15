@@ -1,6 +1,7 @@
 package com.example.myflappy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,10 +29,15 @@ public class GameView extends SurfaceView implements Runnable{
     private List<Bullet> bullets;
     private int sound;
     private Flight flight;
+    private GameActivity activity;
     private Background background1, background2;
 
-    public GameView(Context context, int telaX, int telaY ) {
-        super(context);
+    public GameView(GameActivity activity, int telaX, int telaY ) {
+        super(activity);
+
+        this.activity = activity;
+
+        prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
 
         this.telaX = telaX;
         this.telaY = telaY;
@@ -117,8 +123,7 @@ public class GameView extends SurfaceView implements Runnable{
             }
 
         }
-        for(Bullet bullet : trash)
-            bullets.remove(bullet);
+
 
         for(Bird bird : birds) {
             bird.x -= bird.speed;
@@ -165,6 +170,8 @@ public class GameView extends SurfaceView implements Runnable{
             if(gameOver) {
                 jogando = false;
                 canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+                saveIfHighScore();
+                waitBeforeExiting();
                 getHolder().unlockCanvasAndPost(canvas);
                 return;
             }
@@ -172,9 +179,20 @@ public class GameView extends SurfaceView implements Runnable{
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
 
             for(Bullet bullet : bullets)
-                canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint );
+                canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
 
             getHolder().unlockCanvasAndPost(canvas);
+        }
+    }
+
+    private void waitBeforeExiting() {
+
+        try {
+            Thread.sleep(3000);
+            activity.startActivity(new Intent(activity, MainActivity.class));
+            activity.finish();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

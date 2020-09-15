@@ -10,7 +10,7 @@ import static com.example.myflappy.GameView.telaRatioY;
 
 public class Flight {
 
-    public int toShoot = 0;
+    int toShoot = 0;
     public boolean isGoingUp = false;
     int x, y, width, height, counter = 0, shootCounter = 1;
     Bitmap flight1, flight2, shoot1, shoot2, shoot3, shoot4, shoot5, dead;

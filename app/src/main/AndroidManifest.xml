@@ -10,13 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".GameActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.noActionBar">
 
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:theme="@style/AppTheme.noActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

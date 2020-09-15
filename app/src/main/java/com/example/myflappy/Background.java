@@ -10,7 +10,7 @@ public class Background {
 
     Background(int xTela, int yTela, Resources res){
         background = BitmapFactory.decodeResource(res, R.drawable.background);
-
+        background = Bitmap.createScaledBitmap(background, xTela, yTela, false);
 
     }
 }
