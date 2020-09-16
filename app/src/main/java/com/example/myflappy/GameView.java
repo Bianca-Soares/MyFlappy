@@ -93,7 +93,7 @@ public class GameView extends SurfaceView implements Runnable{
         if(flight.isGoingUp)
             flight.y -= 30 * telaRatioY;
         else
-            flight.y += 30 * telaRatioY;
+            flight.y += 20 * telaRatioY;
 
         if(flight.y < 0)
             flight.y = 0;
@@ -135,11 +135,11 @@ public class GameView extends SurfaceView implements Runnable{
                     return;
                 }
 
-                int bound = (int) (30 * telaRatioX);
+                int bound = (int) (15 * telaRatioX);
                 bird.speed = random.nextInt(bound);
 
-                if (bird.speed < 10 * telaRatioX)
-                    bird.speed = (int) (10 * telaRatioX);
+                if (bird.speed < 5 * telaRatioX)
+                    bird.speed = (int) (5 * telaRatioX);
 
                 bird.x = telaX;
                 bird.y = random.nextInt(telaY - bird.height);

@@ -4,12 +4,13 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.util.Log;
 
 import static com.example.myflappy.GameView.telaRatioX;
 import static com.example.myflappy.GameView.telaRatioY;
 
 public class Bird {
-    public int speed = 20;
+    public int speed = 5;
     public boolean wasShot = true;
     int x = 0, y, width, height, birdCounter = 1;
     Bitmap bird1, bird2, bird3, bird4;
@@ -24,8 +25,8 @@ public class Bird {
         width = bird1.getWidth();
         height = bird1.getHeight();
 
-        width /= 6;
-        height /= 6;
+        width /= 10;
+        height /= 10;
 
         width = (int) (width * telaRatioX);
         height = (int) (height * telaRatioY);

@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.util.Log;
 
 import static com.example.myflappy.GameView.telaRatioX;
 import static com.example.myflappy.GameView.telaRatioY;
@@ -18,6 +19,7 @@ public class Bullet {
 
         width = bullet.getWidth();
         height = bullet.getHeight();
+
 
         width /= 4;
         height /= 4;
