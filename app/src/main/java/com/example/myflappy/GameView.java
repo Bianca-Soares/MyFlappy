@@ -91,9 +91,9 @@ public class GameView extends SurfaceView implements Runnable{
         }
 
         if(flight.isGoingUp)
-            flight.y -= 30 * telaRatioY;
+            flight.y -= 40 * telaRatioY;
         else
-            flight.y += 20 * telaRatioY;
+            flight.y += 15 * telaRatioY;
 
         if(flight.y < 0)
             flight.y = 0;
@@ -234,7 +234,7 @@ public class GameView extends SurfaceView implements Runnable{
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
-        switch ((event.getAction())){
+        switch ((event.getAction()& MotionEvent.ACTION_MASK)){
             case MotionEvent.ACTION_DOWN:
                 if(event.getX() < telaX / 2){
                     flight.isGoingUp = true;
